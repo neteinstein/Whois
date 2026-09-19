@@ -158,6 +158,11 @@ artifacts). That means:
   add it back when extending the parser.
 - **Every dependency version lives in `gradle/libs.versions.toml`.** Never hardcode a version
   string in a module's `build.gradle.kts`.
+- **AGP 9.0.0 requires Gradle 9.1.0+.** The first real CI run failed all four `ubuntu-latest`
+  jobs with `Minimum supported Gradle version is 9.1.0. Current version is 8.14.3` — confirmed
+  by an actual build, not a guess. The wrapper (`gradle/wrapper/gradle-wrapper.properties`) is
+  pinned to Gradle 9.1.0 for this reason; if you ever bump the AGP version, check its minimum
+  Gradle requirement and bump the wrapper alongside it in the same change.
 - **Kover coverage on top of the new `com.android.kotlin.multiplatform.library` target is an
   untested combination.** Kover's Android-target support was built against the older
   `com.android.library` plugin; if `koverXmlReport`/`koverVerify` fail specifically (as opposed
