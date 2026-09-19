@@ -14,7 +14,8 @@ import com.neteinstein.whois.feature.search.domain.model.SearchQuery
  */
 class ParseSharedContactUseCase : UseCase<String, SearchQuery>() {
     override suspend fun invoke(params: String): SearchQuery {
-        var name = ""
+        var formattedName = ""
+        var structuredName = ""
         var phone = ""
         var company = ""
         var address = ""
@@ -38,14 +39,23 @@ class ParseSharedContactUseCase : UseCase<String, SearchQuery>() {
                     .uppercase()
 
                 when (propertyName) {
-                    "FN" -> if (name.isEmpty()) name = value
-                    "N" -> if (name.isEmpty()) name = value.split(';').filter { it.isNotBlank() }.joinToString(" ")
+                    "FN" -> if (formattedName.isEmpty()) formattedName = value
+                    "N" ->
+                        if (structuredName.isEmpty()) {
+                            structuredName = value.split(';').filter { it.isNotBlank() }.joinToString(" ")
+                        }
                     "ORG" -> if (company.isEmpty()) company = value.substringBefore(';').trim()
                     "TEL" -> if (phone.isEmpty()) phone = value
                     "ADR" -> if (address.isEmpty()) address = formatAddress(value)
                     // NOTE and any other property are intentionally ignored.
                 }
             }
+
+        // FN (formatted name) is the vCard's canonical display name and takes priority over the
+        // structured N property whenever both are present - regardless of which one appears
+        // first in the source text (real vCards, and this class's own test fixture, list N
+        // before FN).
+        val name = formattedName.ifEmpty { structuredName }
 
         return SearchQuery(name = name, phone = phone, company = company, address = address)
     }
