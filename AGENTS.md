@@ -135,6 +135,21 @@ artifacts). That means:
   `com.android.application` + `org.jetbrains.kotlin.plugin.compose` (the Compose compiler plugin,
   which still hooks into whatever Kotlin compilation AGP drives). Don't add `kotlinAndroid` back
   without checking whether AGP has changed this again.
+- **Dependency versions in this repo were pinned by guesswork at authoring time, then corrected
+  against live Maven Central metadata once CI exposed the gap.** The third real CI failure was
+  `NoSuchMethodError: KotlinMultiplatformAndroidComponentsExtension.onVariant(...)` while
+  configuring `:androidApp` — a binary-incompatible pairing of Compose Multiplatform 1.8.2 with
+  AGP 9.0.0's newer `com.android.kotlin.multiplatform.library` API shape. Checking
+  `https://repo1.maven.org/maven2/.../maven-metadata.xml` for Kotlin, Compose Multiplatform,
+  Koin, coroutines, and Lifecycle showed each was several minor/major versions behind what's
+  actually published; `gradle/libs.versions.toml` was updated to the current stable release of
+  each at that time. **Maven Central's metadata is reachable even from a sandbox that blocks
+  `dl.google.com`** (it blocks Google's Maven specifically, not Maven Central), so checking a
+  library's actual latest version there is possible even when a full build isn't — do that before
+  guessing a version number, and re-check it if a future CI failure looks like a cross-library
+  binary-compatibility mismatch rather than a straightforward code bug. `androidx.*` artifacts
+  (core-ktx, activity-compose, core-splashscreen, androidx.test.*) are Google-Maven-only, so they
+  can't be checked this way from such a sandbox — CI is the only signal for those.
 - **`doInitKoin()`, not `initKoin()`.** Kotlin/Native's Objective-C exporter treats a top-level
   function named like an initializer (`initXyz`) as an init-style selector and mangles it, so
   Swift can't call `InitKoinKt.initKoin()` directly. The iOS entry point in
