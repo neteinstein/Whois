@@ -1,6 +1,10 @@
 plugins {
+    // No `kotlinAndroid` (org.jetbrains.kotlin.android) here: AGP 9's `com.android.application`
+    // now registers its own `kotlin` extension for built-in Kotlin support, and applying the
+    // classic Kotlin Android plugin on top fails with "Cannot add extension with name 'kotlin',
+    // as there is an extension already registered with that name." The Compose compiler plugin
+    // still hooks into whichever Kotlin compilation AGP drives, so it's unaffected.
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
 }
 

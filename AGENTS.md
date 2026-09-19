@@ -127,6 +127,14 @@ artifacts). That means:
   `com.android.library` inside a KMP module. If AGP renames/reshapes this extension by the time
   you're reading this, every `core/*`, `feature/*`, and `composeApp` build file needs the same
   mechanical update — it's not a per-module design choice, just repeated boilerplate.
+- **`androidApp` does NOT apply `org.jetbrains.kotlin.android`.** CI's second real failure was
+  `Cannot add extension with name 'kotlin', as there is an extension already registered with that
+  name` while applying the classic Kotlin Android plugin. AGP 9's `com.android.application` now
+  registers its own `kotlin` extension (built-in Kotlin support), so applying the separate KGP
+  Android plugin on top double-registers it. `androidApp/build.gradle.kts` applies only
+  `com.android.application` + `org.jetbrains.kotlin.plugin.compose` (the Compose compiler plugin,
+  which still hooks into whatever Kotlin compilation AGP drives). Don't add `kotlinAndroid` back
+  without checking whether AGP has changed this again.
 - **`doInitKoin()`, not `initKoin()`.** Kotlin/Native's Objective-C exporter treats a top-level
   function named like an initializer (`initXyz`) as an init-style selector and mangles it, so
   Swift can't call `InitKoinKt.initKoin()` directly. The iOS entry point in
