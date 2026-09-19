@@ -12,7 +12,7 @@ import com.neteinstein.whois.feature.search.domain.model.SearchQuery
  * details, passwords, relationship history); silently forwarding that into a public web search
  * would be a privacy leak, so it is excluded even though parsing it would be trivial.
  */
-class ParseSharedContactUseCase : UseCase<String, SearchQuery> {
+class ParseSharedContactUseCase : UseCase<String, SearchQuery>() {
     override suspend fun invoke(params: String): SearchQuery {
         var name = ""
         var phone = ""

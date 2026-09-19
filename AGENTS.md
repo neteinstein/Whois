@@ -216,6 +216,15 @@ artifacts). That means:
   `com.android.kotlin.multiplatform.library` Android target is still a comparatively fresh
   combination even with the plugin applied correctly, so a further Kover-specific failure after
   this fix wouldn't be surprising.
+- **The first real Kotlin *compiler* error didn't surface until CI got past all of the above.**
+  Every earlier CI failure happened at Gradle configuration or an AGP verification task, before
+  any `compileAndroidMain`/`compileKotlin` task ever ran - so a genuine bug in this repo's own
+  Kotlin source (three `UseCase` subclasses missing the `()` constructor call in their supertype
+  list: `: UseCase<P, R>` instead of `: UseCase<P, R>()`, since `UseCase` is an abstract class,
+  not an interface) went undetected through five earlier fix-and-push rounds. If you can't run a
+  full Gradle build locally, a standalone `ktlint` pass (see the style-rules bullet below) checks
+  formatting but **not** whether the code actually compiles - don't mistake a clean `ktlint` run
+  for a clean build.
 - **ktlint style rules to keep in mind** (all found by CI, not obvious from reading typical
   Kotlin style guides): a class whose body opens with a blank line before the first member is
   flagged ("Class body should not start with blank line") — no blank line right after the opening
