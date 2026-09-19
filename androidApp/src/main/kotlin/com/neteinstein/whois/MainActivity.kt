@@ -17,7 +17,6 @@ import com.neteinstein.whois.feature.search.domain.IncomingShareBus
 import org.koin.android.ext.android.getKoin
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)

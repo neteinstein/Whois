@@ -6,7 +6,6 @@ import com.neteinstein.whois.feature.search.domain.repository.WhoisSearchReposit
 private const val BRAVE_SEARCH_BASE_URL = "https://search.brave.com/search"
 
 class WhoisSearchRepositoryImpl : WhoisSearchRepository {
-
     override fun buildSearchUrl(query: SearchQuery): String {
         val prompt = buildPrompt(query)
         return "$BRAVE_SEARCH_BASE_URL?q=${prompt.percentEncodeForQuery()}"

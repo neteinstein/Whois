@@ -13,7 +13,6 @@ import com.neteinstein.whois.feature.search.domain.model.SearchQuery
  * would be a privacy leak, so it is excluded even though parsing it would be trivial.
  */
 class ParseSharedContactUseCase : UseCase<String, SearchQuery> {
-
     override suspend fun invoke(params: String): SearchQuery {
         var name = ""
         var phone = ""

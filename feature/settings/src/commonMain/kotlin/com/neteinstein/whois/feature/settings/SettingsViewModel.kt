@@ -22,7 +22,6 @@ class SettingsViewModel(
     private val urlOpener: UrlOpener,
     private val dispatchers: DispatcherProvider,
 ) : ViewModel() {
-
     val language: StateFlow<AppLanguage> = observeLanguageUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

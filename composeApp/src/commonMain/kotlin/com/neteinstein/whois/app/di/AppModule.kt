@@ -9,10 +9,11 @@ import com.neteinstein.whois.feature.splash.splashModule
 import org.koin.dsl.module
 
 /** Bindings shared by every feature; each feature's own DI lives in its module (e.g. [searchModule]). */
-val coreModule = module {
-    single { Navigator() }
-    single<DispatcherProvider> { defaultDispatcherProvider() }
-}
+val coreModule =
+    module {
+        single { Navigator() }
+        single<DispatcherProvider> { defaultDispatcherProvider() }
+    }
 
 /**
  * All Koin modules the app needs. Kept in one list (rather than scattering `modules(...)` calls

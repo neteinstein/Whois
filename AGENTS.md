@@ -186,11 +186,30 @@ artifacts). That means:
   by an actual build, not a guess. The wrapper (`gradle/wrapper/gradle-wrapper.properties`) is
   pinned to Gradle 9.1.0 for this reason; if you ever bump the AGP version, check its minimum
   Gradle requirement and bump the wrapper alongside it in the same change.
-- **Kover coverage on top of the new `com.android.kotlin.multiplatform.library` target is an
-  untested combination.** Kover's Android-target support was built against the older
-  `com.android.library` plugin; if `koverXmlReport`/`koverVerify` fail specifically (as opposed
-  to `testDebugUnitTest` passing on its own), that's the most likely reason, not a real coverage
-  regression.
+- **Kover must be applied in every module it collects coverage from, not just the root.** CI
+  failed `koverXmlReport` with `No matching variant of project :core:ui was found ... attribute
+  'org.gradle.usage' with value 'kover'` for every module the root's `dependencies { kover(project(...)) }`
+  block referenced. Kover's multi-module aggregation pattern needs the plugin applied in each
+  covered module (so it exposes a `kover`-usage variant) *and* in the root (which then merges
+  them); only applying it at the root, as this repo initially did, leaves the covered modules
+  with no such variant to select. Every module in the root's `kover(project(...))` list now also
+  applies `alias(libs.plugins.kover)` in its own `plugins { }` block — keep the two lists in sync
+  if you add or remove a module. Kover's compatibility with the new
+  `com.android.kotlin.multiplatform.library` Android target is still a comparatively fresh
+  combination even with the plugin applied correctly, so a further Kover-specific failure after
+  this fix wouldn't be surprising.
+- **ktlint style rules to keep in mind** (all found by CI, not obvious from reading typical
+  Kotlin style guides): a class whose body opens with a blank line before the first member is
+  flagged ("Class body should not start with blank line") — no blank line right after the opening
+  `{`. A `val x = someCall { ... }` where the RHS spans multiple lines wants the RHS moved to its
+  own line (`val x =` then `someCall { ... }` indented below) rather than `{` trailing on the
+  declaration line. A chained call like `libs.versions.foo.get().toInt()` wants the trailing
+  `.get()`/`.toInt()` calls each on their own indented line once ktlint's Android profile
+  (`android.set(true)` in the root `build.gradle.kts`) is in effect. `MainViewController()` in
+  `composeApp`'s iosMain is a deliberate PascalCase top-level function (Swift-interop
+  convention); it carries `@Suppress("ktlint:standard:function-naming")` rather than being
+  renamed, since ktlint's factory-method exception doesn't recognize it (the function name
+  doesn't match its return type's name, `UIViewController`).
 - **In-app language switching doesn't use Android resource files or `Locale`/NSLocale
   machinery.** `core/ui/strings/Strings.kt` is a plain Kotlin data class with two hand-written
   translations (EN/PT), swapped instantly via a `CompositionLocal` driven by

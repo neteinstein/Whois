@@ -8,7 +8,6 @@ private const val BRAVE_SCHEME_PREFIX = "brave://open-url?url="
 
 /** Prefers handing the URL to Brave's custom scheme; falls back to the default `https://` URL. */
 class IosUrlOpener : UrlOpener {
-
     override fun open(url: String) {
         val application = UIApplication.sharedApplication
         val braveUrl = NSURL(string = BRAVE_SCHEME_PREFIX + url)
