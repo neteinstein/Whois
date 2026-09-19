@@ -186,6 +186,15 @@ artifacts). That means:
   by an actual build, not a guess. The wrapper (`gradle/wrapper/gradle-wrapper.properties`) is
   pinned to Gradle 9.1.0 for this reason; if you ever bump the AGP version, check its minimum
   Gradle requirement and bump the wrapper alongside it in the same change.
+- **`compileSdk`/AGP/Compose Multiplatform versions are a linked triple - bumping one can break
+  the others.** After the Gradle-version fix, `:androidApp:checkDebugAarMetadata` failed with 20
+  AAR metadata errors: Compose Multiplatform 1.12.0's Android artifacts (`androidx.compose.ui:ui-android`,
+  `foundation-android`, etc.) require **AGP 9.1.0+** and **`compileSdk` 37+** — stricter than the
+  Gradle-version bump alone accounted for (AGP was still at 9.0.0, `compileSdk`/`targetSdk` at
+  36). `agp`, `androidCompileSdk`, and `androidTargetSdk` in `libs.versions.toml` are now 9.1.0
+  and 37/37. If you bump `composeMultiplatform` again, expect its Android artifacts' own AGP/SDK
+  floor to have moved too - `checkDebugAarMetadata`'s error message states the exact floor when
+  it hasn't.
 - **Kover must be applied in every module it collects coverage from, not just the root.** CI
   failed `koverXmlReport` with `No matching variant of project :core:ui was found ... attribute
   'org.gradle.usage' with value 'kover'` for every module the root's `dependencies { kover(project(...)) }`
