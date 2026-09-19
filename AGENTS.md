@@ -232,6 +232,22 @@ artifacts). That means:
   full Gradle build locally, a standalone `ktlint` pass (see the style-rules bullet below) checks
   formatting but **not** whether the code actually compiles - don't mistake a clean `ktlint` run
   for a clean build.
+- **`Dispatchers.IO` is `internal` on Kotlin/Native, unlike the JVM/Android artifact.** The iOS
+  build failed compiling `core:common`'s `iosMain` with `Cannot access 'val IO: CoroutineDispatcher':
+  it is internal in 'kotlinx.coroutines.Dispatchers'`. Kotlin/Native has no equivalent
+  blocking-IO thread pool convention, so `IosDispatcherProvider.io` maps to `Dispatchers.Default`
+  instead - the accepted substitute, not a workaround to revisit later.
+- **The Xcode project only builds for `arm64` simulators, not `x86_64`, on purpose.** The repo
+  targets `iosArm64` + `iosSimulatorArm64` only (see the "no `iosX64`" note in Stack, above), but
+  Xcode's default `VALID_ARCHS` for the simulator SDK includes `x86_64` too, so a plain
+  `-destination "generic/platform=iOS Simulator"` build asks Gradle for an `ios_x64` framework
+  slice that doesn't exist - `validateArchitecturesForEmbedAndSignAppleFrameworkForXcode` fails
+  with "Xcode requested target architectures that are not configured in your Gradle build:
+  ios_x64", and Compose Multiplatform's resource sync task fails the same way ("Unknown iOS
+  simulator arch: 'x86_64'"). Both build configurations in `project.pbxproj` set
+  `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` for this reason - don't remove it without also
+  adding `iosX64()` back to every module's `kotlin { }` block (which the "no iosX64" convention
+  explicitly avoids).
 - **ktlint style rules to keep in mind** (all found by CI, not obvious from reading typical
   Kotlin style guides): a class whose body opens with a blank line before the first member is
   flagged ("Class body should not start with blank line") — no blank line right after the opening
