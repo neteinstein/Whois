@@ -9,19 +9,13 @@ plugins {
 kotlin {
     androidLibrary {
         namespace = "com.neteinstein.whois.app"
-        compileSdk =
-            libs.versions.androidCompileSdk
-                .get()
-                .toInt()
-        minSdk =
-            libs.versions.androidMinSdk
-                .get()
-                .toInt()
+        compileSdk = libs.versions.androidCompileSdk.get().toInt()
+        minSdk = libs.versions.androidMinSdk.get().toInt()
     }
 
     listOf(
         iosArm64(),
-        iosSimulatorArm64(),
+        iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"

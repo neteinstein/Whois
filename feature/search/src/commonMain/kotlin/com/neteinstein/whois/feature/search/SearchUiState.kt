@@ -6,5 +6,5 @@ data class SearchUiState(
     val company: String = "",
     val address: String = "",
     val showEmptyFieldsError: Boolean = false,
-    val sharedContactBannerVisible: Boolean = false,
+    val sharedContactBannerVisible: Boolean = false
 )

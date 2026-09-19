@@ -34,11 +34,7 @@ import com.neteinstein.whois.core.ui.theme.Motion
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SplashScreen(
-    onFinished: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: SplashViewModel = koinViewModel(),
-) {
+fun SplashScreen(onFinished: () -> Unit, modifier: Modifier = Modifier, viewModel: SplashViewModel = koinViewModel()) {
     val isReady by viewModel.isReady.collectAsState()
 
     LaunchedEffect(isReady) {
@@ -57,39 +53,39 @@ fun SplashScreen(
         targetValue = 6f,
         animationSpec = infiniteRepeatable(
             animation = tween(1200, easing = Motion.emphasized),
-            repeatMode = RepeatMode.Reverse,
+            repeatMode = RepeatMode.Reverse
         ),
-        label = "glass-sway",
+        label = "glass-sway"
     )
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Box(
                 modifier = Modifier
                     .size(180.dp)
                     .scale(entrance.value)
                     .rotate(glassSway),
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.Center
             ) {
                 MagnifyingGlassOverSilhouette()
             }
             Text(
                 text = strings.appName,
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = strings.splashTagline,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -117,7 +113,7 @@ private fun MagnifyingGlassOverSilhouette(modifier: Modifier = Modifier) {
             sweepAngle = 180f,
             useCenter = true,
             topLeft = Offset(w * 0.12f, shoulderTop),
-            size = androidx.compose.ui.geometry.Size(w * 0.76f, h * 0.55f),
+            size = androidx.compose.ui.geometry.Size(w * 0.76f, h * 0.55f)
         )
 
         // Magnifying glass: ring + handle, offset toward the top-right of the head.
@@ -127,11 +123,11 @@ private fun MagnifyingGlassOverSilhouette(modifier: Modifier = Modifier) {
             color = glassColor,
             radius = glassRadius,
             center = glassCenter,
-            style = Stroke(width = w * 0.045f, cap = StrokeCap.Round),
+            style = Stroke(width = w * 0.045f, cap = StrokeCap.Round)
         )
         val handleStart = Offset(
             glassCenter.x + glassRadius * 0.75f,
-            glassCenter.y + glassRadius * 0.75f,
+            glassCenter.y + glassRadius * 0.75f
         )
         val handleEnd = Offset(handleStart.x + w * 0.16f, handleStart.y + w * 0.16f)
         drawLine(
@@ -139,7 +135,7 @@ private fun MagnifyingGlassOverSilhouette(modifier: Modifier = Modifier) {
             start = handleStart,
             end = handleEnd,
             strokeWidth = w * 0.05f,
-            cap = StrokeCap.Round,
+            cap = StrokeCap.Round
         )
     }
 }

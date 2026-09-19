@@ -20,12 +20,12 @@ class SettingsViewModel(
     private val changeLanguageUseCase: ChangeLanguageUseCase,
     private val navigator: Navigator,
     private val urlOpener: UrlOpener,
-    private val dispatchers: DispatcherProvider,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
     val language: StateFlow<AppLanguage> = observeLanguageUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = AppLanguage.default,
+        initialValue = AppLanguage.default
     )
 
     fun onLanguageSelected(language: AppLanguage) {

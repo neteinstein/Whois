@@ -3,11 +3,11 @@ package com.neteinstein.whois.feature.search.domain.usecase
 import com.neteinstein.whois.core.common.UrlOpener
 import com.neteinstein.whois.feature.search.domain.model.SearchQuery
 import com.neteinstein.whois.feature.search.domain.repository.WhoisSearchRepository
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
 
 private class FakeRepository : WhoisSearchRepository {
     override fun buildSearchUrl(query: SearchQuery): String = "https://search.brave.com/search?q=fake"

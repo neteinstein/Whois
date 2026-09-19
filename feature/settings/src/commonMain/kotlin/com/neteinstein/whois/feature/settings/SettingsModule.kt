@@ -20,7 +20,7 @@ val settingsModule =
                 changeLanguageUseCase = get(),
                 navigator = get(),
                 urlOpener = get(),
-                dispatchers = get(),
+                dispatchers = get()
             )
         }
     }

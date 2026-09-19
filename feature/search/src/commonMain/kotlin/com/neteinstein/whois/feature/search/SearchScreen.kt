@@ -32,10 +32,7 @@ import com.neteinstein.whois.core.ui.strings.LocalStrings
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SearchScreen(
-    modifier: Modifier = Modifier,
-    viewModel: SearchViewModel = koinViewModel(),
-) {
+fun SearchScreen(modifier: Modifier = Modifier, viewModel: SearchViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val strings = LocalStrings.current
 
@@ -45,9 +42,9 @@ fun SearchScreen(
             WhoisTopBar(
                 title = strings.searchTitle,
                 settingsContentDescription = strings.settingsContentDescription,
-                onSettingsClick = viewModel::onSettingsClicked,
+                onSettingsClick = viewModel::onSettingsClicked
             )
-        },
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -55,14 +52,14 @@ fun SearchScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 24.dp, vertical = 16.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(text = strings.searchSubtitle, style = MaterialTheme.typography.bodyMedium)
 
             AnimatedVisibility(
                 visible = uiState.sharedContactBannerVisible,
                 enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically(),
+                exit = fadeOut() + shrinkVertically()
             ) {
                 SharedContactBanner(text = strings.sharedContactBanner)
             }
@@ -70,33 +67,33 @@ fun SearchScreen(
             WhoisTextField(
                 value = uiState.name,
                 onValueChange = viewModel::onNameChange,
-                label = strings.fieldName,
+                label = strings.fieldName
             )
             WhoisTextField(
                 value = uiState.phone,
                 onValueChange = viewModel::onPhoneChange,
-                label = strings.fieldPhone,
+                label = strings.fieldPhone
             )
             WhoisTextField(
                 value = uiState.company,
                 onValueChange = viewModel::onCompanyChange,
-                label = strings.fieldCompany,
+                label = strings.fieldCompany
             )
             WhoisTextField(
                 value = uiState.address,
                 onValueChange = viewModel::onAddressChange,
-                label = strings.fieldAddress,
+                label = strings.fieldAddress
             )
 
             AnimatedVisibility(
                 visible = uiState.showEmptyFieldsError,
                 enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically(),
+                exit = fadeOut() + shrinkVertically()
             ) {
                 Text(
                     text = strings.searchEmptyError,
                     color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
 
@@ -109,21 +106,21 @@ fun SearchScreen(
 private fun SharedContactBanner(text: String) {
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
             Text(
                 text = text,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

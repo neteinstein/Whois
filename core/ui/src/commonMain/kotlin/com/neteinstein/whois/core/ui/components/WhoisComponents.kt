@@ -23,7 +23,7 @@ fun WhoisTextField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    singleLine: Boolean = true,
+    singleLine: Boolean = true
 ) {
     OutlinedTextField(
         value = value,
@@ -33,23 +33,18 @@ fun WhoisTextField(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxWidth()
-            .animateContentSize(Motion.emphasizedTween()),
+            .animateContentSize(Motion.emphasizedTween())
     )
 }
 
 @Composable
-fun WhoisPrimaryButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-) {
+fun WhoisPrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     Button(
         onClick = onClick,
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
         contentPadding = ButtonDefaults.ContentPadding,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(text)
     }
@@ -61,7 +56,7 @@ fun WhoisTopBar(
     title: String,
     settingsContentDescription: String,
     onSettingsClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     CenterAlignedTopAppBar(
         title = { Text(title) },
@@ -69,10 +64,10 @@ fun WhoisTopBar(
             IconButton(onClick = onSettingsClick) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
-                    contentDescription = settingsContentDescription,
+                    contentDescription = settingsContentDescription
                 )
             }
         },
-        modifier = modifier,
+        modifier = modifier
     )
 }

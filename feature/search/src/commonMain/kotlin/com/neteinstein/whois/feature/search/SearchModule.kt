@@ -20,7 +20,7 @@ val searchModule =
                 parseSharedContactUseCase = get(),
                 incomingShareBus = get(),
                 navigator = get(),
-                dispatchers = get(),
+                dispatchers = get()
             )
         }
     }

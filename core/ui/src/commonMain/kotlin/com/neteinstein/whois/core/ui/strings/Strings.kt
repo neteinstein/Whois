@@ -26,7 +26,7 @@ data class Strings(
     val aboutDescription: String,
     val aboutAuthor: String,
     val aboutViewSource: String,
-    val aboutVersion: String,
+    val aboutVersion: String
 )
 
 val EnglishStrings = Strings(
@@ -51,7 +51,7 @@ val EnglishStrings = Strings(
         "person or company using whatever details you have on hand.",
     aboutAuthor = "By neteinstein",
     aboutViewSource = "View source on GitHub",
-    aboutVersion = "Version",
+    aboutVersion = "Version"
 )
 
 val PortugueseStrings = Strings(
@@ -76,5 +76,5 @@ val PortugueseStrings = Strings(
         "sobre uma pessoa ou empresa usando os dados que você tiver em mãos.",
     aboutAuthor = "Por neteinstein",
     aboutViewSource = "Ver código-fonte no GitHub",
-    aboutVersion = "Versão",
+    aboutVersion = "Versão"
 )

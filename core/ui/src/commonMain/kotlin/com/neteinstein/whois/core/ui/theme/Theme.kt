@@ -23,7 +23,7 @@ private val LightColors = lightColorScheme(
     onSurfaceVariant = md_theme_light_onSurfaceVariant,
     outline = md_theme_light_outline,
     error = md_theme_light_error,
-    onError = md_theme_light_onError,
+    onError = md_theme_light_onError
 )
 
 private val DarkColors = darkColorScheme(
@@ -43,18 +43,15 @@ private val DarkColors = darkColorScheme(
     onSurfaceVariant = md_theme_dark_onSurfaceVariant,
     outline = md_theme_dark_outline,
     error = md_theme_dark_error,
-    onError = md_theme_dark_onError,
+    onError = md_theme_dark_onError
 )
 
 @Composable
-fun WhoisTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
+fun WhoisTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = if (darkTheme) DarkColors else LightColors,
         typography = WhoisTypography,
         shapes = WhoisShapes,
-        content = content,
+        content = content
     )
 }

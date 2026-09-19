@@ -19,7 +19,7 @@ class SearchViewModel(
     private val parseSharedContactUseCase: ParseSharedContactUseCase,
     private val incomingShareBus: IncomingShareBus,
     private val navigator: Navigator,
-    private val dispatchers: DispatcherProvider,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -59,7 +59,7 @@ class SearchViewModel(
                 phone = query.phone,
                 company = query.company,
                 address = query.address,
-                sharedContactBannerVisible = true,
+                sharedContactBannerVisible = true
             )
         }
         performSearch(query)

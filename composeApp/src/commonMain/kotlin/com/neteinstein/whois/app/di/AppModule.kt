@@ -24,5 +24,5 @@ fun sharedModules() = listOf(
     coreModule,
     splashModule,
     searchModule,
-    settingsModule,
+    settingsModule
 )

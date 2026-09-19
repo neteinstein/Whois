@@ -47,7 +47,7 @@ kover {
                     "*.BuildConfig",
                     "*.*\$default*",
                     "*ComposableSingletons*",
-                    "*.di.*",
+                    "*.di.*"
                 )
                 annotatedBy("androidx.compose.runtime.Composable")
             }

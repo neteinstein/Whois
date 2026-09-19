@@ -45,14 +45,14 @@ fun App() {
                                 fadeIn(tween(duration))
                             ).togetherWith(
                             slideOutHorizontally(tween(duration, easing = Motion.emphasized)) { -it / 4 } +
-                                fadeOut(tween(duration)),
+                                fadeOut(tween(duration))
                         )
                     },
-                    label = "app-navigation",
+                    label = "app-navigation"
                 ) { destination ->
                     when (destination) {
                         Destination.Splash -> SplashScreen(
-                            onFinished = { navigator.replaceAll(Destination.Search) },
+                            onFinished = { navigator.replaceAll(Destination.Search) }
                         )
                         Destination.Search -> SearchScreen()
                         Destination.Settings -> SettingsScreen()

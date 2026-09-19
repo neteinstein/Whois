@@ -30,10 +30,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
-    modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = koinViewModel(),
-) {
+fun SettingsScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel = koinViewModel()) {
     val strings = LocalStrings.current
     val selectedLanguage by viewModel.language.collectAsState()
 
@@ -46,26 +43,34 @@ fun SettingsScreen(
                     IconButton(onClick = viewModel::onBackClicked) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
+                            contentDescription = null
                         )
                     }
-                },
+                }
             )
-        },
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(text = strings.languageSectionTitle, style = MaterialTheme.typography.titleMedium)
                 LanguageSelector(
                     selected = selectedLanguage,
-                    labelFor = { if (it == AppLanguage.ENGLISH) strings.languageEnglish else strings.languagePortuguese },
-                    onSelected = viewModel::onLanguageSelected,
+                    labelFor = {
+                        if (it ==
+                            AppLanguage.ENGLISH
+                        ) {
+                            strings.languageEnglish
+                        } else {
+                            strings.languagePortuguese
+                        }
+                    },
+                    onSelected = viewModel::onLanguageSelected
                 )
             }
 
@@ -88,7 +93,7 @@ fun SettingsScreen(
 private fun LanguageSelector(
     selected: AppLanguage,
     labelFor: (AppLanguage) -> String,
-    onSelected: (AppLanguage) -> Unit,
+    onSelected: (AppLanguage) -> Unit
 ) {
     val languages = AppLanguage.entries
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
@@ -96,7 +101,7 @@ private fun LanguageSelector(
             SegmentedButton(
                 selected = selected == language,
                 onClick = { onSelected(language) },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = languages.size),
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = languages.size)
             ) {
                 Text(labelFor(language))
             }
