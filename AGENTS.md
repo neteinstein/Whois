@@ -212,10 +212,17 @@ artifacts). That means:
   them); only applying it at the root, as this repo initially did, leaves the covered modules
   with no such variant to select. Every module in the root's `kover(project(...))` list now also
   applies `alias(libs.plugins.kover)` in its own `plugins { }` block — keep the two lists in sync
-  if you add or remove a module. Kover's compatibility with the new
-  `com.android.kotlin.multiplatform.library` Android target is still a comparatively fresh
-  combination even with the plugin applied correctly, so a further Kover-specific failure after
-  this fix wouldn't be surprising.
+  if you add or remove a module. The predicted further Kover-specific failure did happen next:
+  `koverVerify` failed with `lines covered percentage is 0.000000, but expected minimum is 40`
+  even though the module's own unit tests pass. Kover's tasks never triggered `testDebugUnitTest`
+  as an upstream dependency on this `com.android.kotlin.multiplatform.library` target (no
+  `Task :*:testDebugUnitTest` line appears anywhere in that job's log, only the various
+  `kover*` tasks) — a real gap in Kover's support for this new AGP plugin, not a config mistake.
+  The workaround is in `.github/workflows/pr.yml`'s coverage job: run
+  `testDebugUnitTest koverXmlReport koverVerify` explicitly rather than trusting
+  `koverXmlReport` to pull tests in on its own. If a future Kover release fixes the dependency
+  wiring, the explicit `testDebugUnitTest` becomes redundant but harmless — leave it unless you
+  confirm Kover has actually fixed this.
 - **The first real Kotlin *compiler* error didn't surface until CI got past all of the above.**
   Every earlier CI failure happened at Gradle configuration or an AGP verification task, before
   any `compileAndroidMain`/`compileKotlin` task ever ran - so a genuine bug in this repo's own

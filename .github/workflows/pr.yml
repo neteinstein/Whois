@@ -63,7 +63,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-build-env
       - name: Generate and verify coverage
-        run: ./gradlew koverXmlReport koverVerify --stacktrace
+        # Kover's dependsOn wiring onto the android target's unit-test tasks isn't reliable yet
+        # on the new com.android.kotlin.multiplatform.library plugin (see AGENTS.md), so run the
+        # tests explicitly first rather than trusting koverXmlReport to trigger them.
+        run: ./gradlew testDebugUnitTest koverXmlReport koverVerify --stacktrace
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
