@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Person silhouette (head + shoulders), kept inside the ~66dp adaptive-icon safe zone. -->
+    <path
+        android:fillColor="@color/launcher_foreground"
+        android:fillAlpha="0.55"
+        android:pathData="M54,44 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0" />
+    <path
+        android:fillColor="@color/launcher_foreground"
+        android:fillAlpha="0.55"
+        android:pathData="M33,58 a21,17 0 0,1 42,0 z" />
+    <!-- Magnifying glass -->
+    <path
+        android:strokeColor="@color/launcher_foreground"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:pathData="M63,40 m-13,0 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0" />
+    <path
+        android:strokeColor="@color/launcher_foreground"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:pathData="M72,49 L82,59" />
+</vector>
