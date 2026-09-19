@@ -11,6 +11,10 @@ kotlin {
         namespace = "com.neteinstein.whois.core.ui"
         compileSdk = libs.versions.androidCompileSdk.get().toInt()
         minSdk = libs.versions.androidMinSdk.get().toInt()
+
+        // Opts into the JVM-executed "host test" compilation - see core/common/build.gradle.kts
+        // for why this is required for allTests to run any Android-targeted commonTest at all.
+        withHostTestBuilder {}.configure {}
     }
 
     iosArm64()

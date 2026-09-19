@@ -233,6 +233,25 @@ artifacts). That means:
   If you ever see `NO-SOURCE` next to a module you expected to have tests run, that's the same
   failure mode recurring - check the actual task name, don't assume `testDebugUnitTest` reaches
   it.
+- **Switching to `allTests` still wasn't enough - Android host-side unit tests are opt-in under
+  `com.android.kotlin.multiplatform.library`.** Coverage still failed with `lines covered
+  percentage is 0.000000` after the `allTests` fix above, and `compileTestKotlinIosSimulatorArm64`
+  was the only test-compile task that ran per module (visible in the job log as `> Task
+  :feature:splash:compileTestKotlinIosSimulatorArm64` immediately followed by `> Task
+  :feature:splash:allTests NO-SOURCE`, with no `androidHostTest`/JVM test-compile task anywhere in
+  the log). The root cause: under this plugin, **both** host-side (JVM) and instrumented Android
+  unit tests are disabled by default for build-speed reasons - `androidLibrary { }` alone gives
+  you a compile-only Android target, not a runnable one. `commonTest` was therefore only ever
+  getting compiled for `iosSimulatorArm64`, which a Linux CI runner can't execute either, so
+  `allTests` had nothing left it could actually run. Every module with real tests (`core:common`,
+  `core:ui`, `feature:splash`, `feature:search`, `feature:settings`) plus `composeApp` (for
+  consistency with the rest of the `kover(project(...))` list, even though it has no test sources
+  yet) now calls `withHostTestBuilder {}.configure {}` inside their `androidLibrary { }` block to
+  opt into the JVM-executed "host test" compilation (its dependencies, if ever needed beyond what
+  `commonTest.dependencies` already provides, would go in an `androidHostTest` source set). This
+  was diagnosed from the Android Kotlin Multiplatform plugin docs
+  (https://developer.android.com/kotlin/multiplatform/plugin), not verified by an actual local
+  build (see the sandboxed-container note above) - CI on the next push is the real signal.
 - **The first real Kotlin *compiler* error didn't surface until CI got past all of the above.**
   Every earlier CI failure happened at Gradle configuration or an AGP verification task, before
   any `compileAndroidMain`/`compileKotlin` task ever ran - so a genuine bug in this repo's own
