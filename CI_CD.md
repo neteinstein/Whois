@@ -8,7 +8,7 @@ parallel — none `needs:` another:
 | Job          | Runner         | What it does                                                        |
 |--------------|----------------|----------------------------------------------------------------------|
 | `build`      | `ubuntu-latest`| `./gradlew :androidApp:assembleDebug` — compiles every module (all KMP targets get built as dependencies) and assembles the debug APK. |
-| `unit-tests` | `ubuntu-latest`| `./gradlew testDebugUnitTest` — runs `commonTest` + `androidUnitTest` for every module on the JVM. Uploads `**/build/reports/tests/` as an artifact. |
+| `unit-tests` | `ubuntu-latest`| `./gradlew allTests` — Kotlin Multiplatform's aggregate task; runs `commonTest` + the android target's JVM-executed tests for every module (see the `allTests` vs. `testDebugUnitTest` gotcha in `AGENTS.md` — the latter silently runs nothing on these modules). Uploads `**/build/reports/tests/` as an artifact. |
 | `lint`       | `ubuntu-latest`| `ktlintCheck` (style, every module) + `:androidApp:lintDebug` (Android Lint). Uploads reports. |
 | `coverage`   | `ubuntu-latest`| `koverXmlReport` + `koverVerify` (Kover, minimum line coverage 40% — see `kover { }` in the root `build.gradle.kts`). Uploads the XML/HTML report. |
 | `ios-build`  | `macos-15`     | `xcodebuild ... build` against `iosApp/iosApp.xcodeproj`, targeting the iOS Simulator. This is what actually exercises the hand-authored Xcode project and the `embedAndSignAppleFrameworkForXcode` Gradle task — a Linux dev/agent box has no way to verify either. |

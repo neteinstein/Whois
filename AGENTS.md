@@ -68,9 +68,11 @@ screens or needs deep links, revisit this.
   new feature's module to that list or it will silently not be wired up.
 - `DispatcherProvider` (in `core:common`) is injected everywhere instead of using
   `Dispatchers.IO`/`Default` directly, so tests can substitute a `TestDispatcher`.
-- Tests live in `commonTest` using `kotlin.test`, and must pass with `./gradlew testDebugUnitTest`
-  (that task runs `commonTest` + `androidUnitTest` on the JVM — no emulator, no iOS simulator
-  needed). New domain/data code should arrive with a test in the same PR.
+- Tests live in `commonTest` using `kotlin.test`, and must pass with `./gradlew allTests`
+  (Kotlin Multiplatform's own aggregate task; runs `commonTest` + the android target's
+  JVM-executed tests — no emulator, no iOS simulator needed — see the `allTests` vs.
+  `testDebugUnitTest` gotcha below). New domain/data code should arrive with a test in the same
+  PR.
 - A ViewModel that touches `viewModelScope` in a test needs `Dispatchers.setMain(...)` /
   `resetMain()` around it (see `SplashViewModelTest`) — otherwise `viewModelScope` throws because
   no `Main` dispatcher is registered on a plain JVM unit test.
@@ -78,7 +80,7 @@ screens or needs deep links, revisit this.
 ## Build / verify commands
 
 ```
-./gradlew testDebugUnitTest        # all commonTest + androidUnitTest, no SDK emulator needed
+./gradlew allTests                 # all commonTest + androidUnitTest, no SDK emulator needed
 ./gradlew ktlintCheck              # style, all modules
 ./gradlew :androidApp:lintDebug    # Android Lint
 ./gradlew koverXmlReport koverVerify
@@ -212,17 +214,25 @@ artifacts). That means:
   them); only applying it at the root, as this repo initially did, leaves the covered modules
   with no such variant to select. Every module in the root's `kover(project(...))` list now also
   applies `alias(libs.plugins.kover)` in its own `plugins { }` block — keep the two lists in sync
-  if you add or remove a module. The predicted further Kover-specific failure did happen next:
-  `koverVerify` failed with `lines covered percentage is 0.000000, but expected minimum is 40`
-  even though the module's own unit tests pass. Kover's tasks never triggered `testDebugUnitTest`
-  as an upstream dependency on this `com.android.kotlin.multiplatform.library` target (no
-  `Task :*:testDebugUnitTest` line appears anywhere in that job's log, only the various
-  `kover*` tasks) — a real gap in Kover's support for this new AGP plugin, not a config mistake.
-  The workaround is in `.github/workflows/pr.yml`'s coverage job: run
-  `testDebugUnitTest koverXmlReport koverVerify` explicitly rather than trusting
-  `koverXmlReport` to pull tests in on its own. If a future Kover release fixes the dependency
-  wiring, the explicit `testDebugUnitTest` becomes redundant but harmless — leave it unless you
-  confirm Kover has actually fixed this.
+  if you add or remove a module.
+- **`testDebugUnitTest` does not exist on these KMP modules at all — use `allTests` instead.**
+  `koverVerify` kept failing with `lines covered percentage is 0.000000, but expected minimum is
+  40` even after explicitly running `testDebugUnitTest` before it (first suspected as a
+  Kover/AGP dependency-wiring gap). The real cause: under
+  `com.android.kotlin.multiplatform.library`, `testDebugUnitTest` is a task name that only
+  exists on `:androidApp` (a plain `com.android.application` module with no test sources of its
+  own - its `testDebugUnitTest` runs and reports `NO-SOURCE`). None of `core:common`, `core:ui`,
+  or the `feature:*` modules register a task by that name; Gradle silently skips a bare task name
+  in any subproject where it doesn't exist rather than erroring, so **the "Unit tests" CI job had
+  been passing on every prior commit without ever running a single one of this repo's actual
+  tests** - confirmed by grepping that job's own log for `compileAndroidTest`/`testDebugUnitTest`
+  per module and finding only `:androidApp:testDebugUnitTest NO-SOURCE`. Both the "Unit tests"
+  job and the coverage job's Gradle command now use `allTests` - Kotlin Multiplatform's own
+  aggregate task, which runs whatever test tasks each target actually registers (`commonTest`,
+  the android target's JVM-executed tests, etc.) without needing to know AGP's naming for them.
+  If you ever see `NO-SOURCE` next to a module you expected to have tests run, that's the same
+  failure mode recurring - check the actual task name, don't assume `testDebugUnitTest` reaches
+  it.
 - **The first real Kotlin *compiler* error didn't surface until CI got past all of the above.**
   Every earlier CI failure happened at Gradle configuration or an AGP verification task, before
   any `compileAndroidMain`/`compileKotlin` task ever ran - so a genuine bug in this repo's own

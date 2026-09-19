@@ -27,7 +27,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-build-env
       - name: Run commonTest + androidUnitTest across all modules
-        run: ./gradlew testDebugUnitTest --stacktrace
+        # NOT testDebugUnitTest: that task only exists on :androidApp (a plain com.android.application
+        # module with no tests of its own) under the new com.android.kotlin.multiplatform.library
+        # plugin - every KMP module's actual test task has a different name that Gradle silently
+        # skips rather than errors on when the task name doesn't match, so this was passing
+        # vacuously without ever running a single real test. allTests is Kotlin Multiplatform's
+        # own aggregate task and runs every registered test task (commonTest, the android target's
+        # JVM-executed tests, etc.) regardless of what AGP names them.
+        run: ./gradlew allTests --stacktrace
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,10 +70,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-build-env
       - name: Generate and verify coverage
-        # Kover's dependsOn wiring onto the android target's unit-test tasks isn't reliable yet
-        # on the new com.android.kotlin.multiplatform.library plugin (see AGENTS.md), so run the
-        # tests explicitly first rather than trusting koverXmlReport to trigger them.
-        run: ./gradlew testDebugUnitTest koverXmlReport koverVerify --stacktrace
+        # allTests, not testDebugUnitTest - see the "Unit tests" job for why that task name
+        # doesn't reach the KMP modules' tests at all under this AGP plugin (it was the real
+        # reason koverVerify saw 0% coverage, not a Kover/AGP dependency-wiring gap).
+        run: ./gradlew allTests koverXmlReport koverVerify --stacktrace
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
