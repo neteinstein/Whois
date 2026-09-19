@@ -181,11 +181,12 @@ artifacts). That means:
   add it back when extending the parser.
 - **Every dependency version lives in `gradle/libs.versions.toml`.** Never hardcode a version
   string in a module's `build.gradle.kts`.
-- **AGP 9.0.0 requires Gradle 9.1.0+.** The first real CI run failed all four `ubuntu-latest`
-  jobs with `Minimum supported Gradle version is 9.1.0. Current version is 8.14.3` — confirmed
-  by an actual build, not a guess. The wrapper (`gradle/wrapper/gradle-wrapper.properties`) is
-  pinned to Gradle 9.1.0 for this reason; if you ever bump the AGP version, check its minimum
-  Gradle requirement and bump the wrapper alongside it in the same change.
+- **AGP has a minimum Gradle version, and it moves with the AGP version.** The first real CI run
+  failed all four `ubuntu-latest` jobs with `Minimum supported Gradle version is 9.1.0. Current
+  version is 8.14.3` against AGP 9.0.0 — confirmed by an actual build, not a guess. See the next
+  two bullets for how this cascaded further when AGP itself had to move to 9.1.0. If you ever
+  bump the AGP version again, check its minimum Gradle requirement and bump the wrapper
+  (`gradle/wrapper/gradle-wrapper.properties`) alongside it in the same change.
 - **`compileSdk`/AGP/Compose Multiplatform versions are a linked triple - bumping one can break
   the others.** After the Gradle-version fix, `:androidApp:checkDebugAarMetadata` failed with 20
   AAR metadata errors: Compose Multiplatform 1.12.0's Android artifacts (`androidx.compose.ui:ui-android`,
@@ -195,6 +196,14 @@ artifacts). That means:
   and 37/37. If you bump `composeMultiplatform` again, expect its Android artifacts' own AGP/SDK
   floor to have moved too - `checkDebugAarMetadata`'s error message states the exact floor when
   it hasn't.
+- **AGP 9.1.0 in turn requires Gradle 9.3.1+** (`Minimum supported Gradle version is 9.3.1.
+  Current version is 9.1.0` — a *second* Gradle-version bump in the same cascade as the AGP/
+  compileSdk fix above). Rather than bump the wrapper to exactly 9.3.1 and risk a third
+  round-trip, it's pinned to whatever `https://services.gradle.org/versions/current` reported as
+  the latest stable release at the time (9.7.1) for headroom. AGP, Gradle, and Compose
+  Multiplatform version floors keep escalating together; when one of the three needs a bump,
+  check whether Gradle already has a much newer stable release than the bare minimum before
+  picking a value, so this doesn't become a fourth commit.
 - **Kover must be applied in every module it collects coverage from, not just the root.** CI
   failed `koverXmlReport` with `No matching variant of project :core:ui was found ... attribute
   'org.gradle.usage' with value 'kover'` for every module the root's `dependencies { kover(project(...)) }`
