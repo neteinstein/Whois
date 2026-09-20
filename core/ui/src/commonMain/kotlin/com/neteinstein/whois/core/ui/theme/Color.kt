@@ -1,0 +1,43 @@
+package com.neteinstein.whois.core.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+// Brand: a deep indigo/teal pair evoking "search & discovery".
+internal val SeedIndigo = Color(0xFF3D5AFE)
+internal val SeedTeal = Color(0xFF00BFA5)
+
+internal val md_theme_light_primary = Color(0xFF3D53D6)
+internal val md_theme_light_onPrimary = Color(0xFFFFFFFF)
+internal val md_theme_light_primaryContainer = Color(0xFFDEE0FF)
+internal val md_theme_light_onPrimaryContainer = Color(0xFF00105C)
+internal val md_theme_light_secondary = Color(0xFF00A896)
+internal val md_theme_light_onSecondary = Color(0xFFFFFFFF)
+internal val md_theme_light_secondaryContainer = Color(0xFF6FF7E4)
+internal val md_theme_light_onSecondaryContainer = Color(0xFF00201C)
+internal val md_theme_light_background = Color(0xFFFCFBFF)
+internal val md_theme_light_onBackground = Color(0xFF1B1B1F)
+internal val md_theme_light_surface = Color(0xFFFCFBFF)
+internal val md_theme_light_onSurface = Color(0xFF1B1B1F)
+internal val md_theme_light_surfaceVariant = Color(0xFFE3E1EC)
+internal val md_theme_light_onSurfaceVariant = Color(0xFF46464F)
+internal val md_theme_light_outline = Color(0xFF767680)
+internal val md_theme_light_error = Color(0xFFBA1A1A)
+internal val md_theme_light_onError = Color(0xFFFFFFFF)
+
+internal val md_theme_dark_primary = Color(0xFFBAC3FF)
+internal val md_theme_dark_onPrimary = Color(0xFF0019A6)
+internal val md_theme_dark_primaryContainer = Color(0xFF1F3AC0)
+internal val md_theme_dark_onPrimaryContainer = Color(0xFFDEE0FF)
+internal val md_theme_dark_secondary = Color(0xFF4EDBC8)
+internal val md_theme_dark_onSecondary = Color(0xFF00382F)
+internal val md_theme_dark_secondaryContainer = Color(0xFF004D43)
+internal val md_theme_dark_onSecondaryContainer = Color(0xFF6FF7E4)
+internal val md_theme_dark_background = Color(0xFF1B1B1F)
+internal val md_theme_dark_onBackground = Color(0xFFE4E1E6)
+internal val md_theme_dark_surface = Color(0xFF1B1B1F)
+internal val md_theme_dark_onSurface = Color(0xFFE4E1E6)
+internal val md_theme_dark_surfaceVariant = Color(0xFF46464F)
+internal val md_theme_dark_onSurfaceVariant = Color(0xFFC7C5D0)
+internal val md_theme_dark_outline = Color(0xFF90909A)
+internal val md_theme_dark_error = Color(0xFFFFB4AB)
+internal val md_theme_dark_onError = Color(0xFF690005)

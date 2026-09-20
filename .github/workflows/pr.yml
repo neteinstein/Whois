@@ -1,0 +1,113 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: pr-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Compile / assemble
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-build-env
+      - name: Assemble debug APK and all KMP targets
+        run: ./gradlew :androidApp:assembleDebug --stacktrace
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-build-env
+      - name: Run commonTest + androidUnitTest across all modules
+        # NOT testDebugUnitTest: that task only exists on :androidApp (a plain com.android.application
+        # module with no tests of its own) under the new com.android.kotlin.multiplatform.library
+        # plugin - every KMP module's actual test task has a different name that Gradle silently
+        # skips rather than errors on when the task name doesn't match, so this was passing
+        # vacuously without ever running a single real test. allTests is Kotlin Multiplatform's
+        # own aggregate task and runs every registered test task (commonTest, the android target's
+        # JVM-executed tests, etc.) regardless of what AGP names them.
+        run: ./gradlew allTests --stacktrace
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: "**/build/reports/tests/"
+          retention-days: 7
+
+  lint:
+    name: Lint (ktlint + Android Lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-build-env
+      - name: ktlint
+        run: ./gradlew ktlintCheck --stacktrace
+      - name: Android Lint
+        run: ./gradlew :androidApp:lintDebug --stacktrace
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: |
+            **/build/reports/ktlint/
+            **/build/reports/lint-results-debug.html
+          retention-days: 7
+
+  coverage:
+    name: Code coverage (Kover)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-build-env
+      - name: Generate and verify coverage
+        # allTests, not testDebugUnitTest - see the "Unit tests" job for why that task name
+        # doesn't reach the KMP modules' tests at all under this AGP plugin (it was the real
+        # reason koverVerify saw 0% coverage, not a Kover/AGP dependency-wiring gap).
+        run: ./gradlew allTests koverXmlReport koverVerify --stacktrace
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kover-report
+          path: build/reports/kover/
+          retention-days: 7
+
+  ios-build:
+    name: iOS build (simulator)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Build iosApp for the simulator
+        # Triggers the "Compile Kotlin Framework" Run Script build phase, which calls
+        # `:composeApp:embedAndSignAppleFrameworkForXcode` - this is the real signal that the
+        # hand-authored Xcode project + Kotlin/Native framework wiring actually works, which a
+        # sandboxed/Linux agent has no way to check locally.
+        run: |
+          xcodebuild \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            build

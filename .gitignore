@@ -1,0 +1,76 @@
+# Gradle
+.gradle/
+build/
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Local configuration
+local.properties
+*.hprof
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Kotlin/Native
+kotlin-js-store/
+
+# Android
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+release/
+
+# Keystores (never commit signing material)
+*.jks
+*.keystore
+!debug.keystore
+
+# Android secrets (kept out of VCS; CI supplies a placeholder via *.ci files)
+androidApp/google-services.json
+**/google-services.json
+
+# Xcode / iOS
+iosApp/build/
+iosApp/DerivedData/
+iosApp/*.xcworkspace/xcuserdata/
+iosApp/*.xcodeproj/xcuserdata/
+iosApp/*.xcodeproj/project.xcworkspace/xcuserdata/
+iosApp/Pods/
+iosApp/*.hmap
+iosApp/*.ipa
+iosApp/*.dSYM.zip
+iosApp/*.dSYM
+*.xcuserstate
+Carthage/
+
+# Kotlin/Native Xcode-embedded framework output
+composeApp/build/
+**/*.framework/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kover / coverage reports
+**/kover/
+
+# Node (docs tooling, if any)
+node_modules/
+
+# Misc
+*.log
+.env
