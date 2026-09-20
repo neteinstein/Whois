@@ -47,7 +47,12 @@ kover {
                     "*.BuildConfig",
                     "*.*\$default*",
                     "*ComposableSingletons*",
-                    "*.di.*"
+                    "*.di.*",
+                    // Same rationale as `*.di.*`: declarative color/shape/typography/motion
+                    // tokens, not logic - see StringsTest for why the sibling `strings` package
+                    // needed a test instead of an exclude (referencing it exercises the same
+                    // file's data via the Kotlin top-level-property facade class anyway).
+                    "*.theme.*"
                 )
                 annotatedBy("androidx.compose.runtime.Composable")
             }
