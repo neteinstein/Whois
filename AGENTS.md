@@ -152,11 +152,22 @@ artifacts). That means:
   binary-compatibility mismatch rather than a straightforward code bug. `androidx.*` artifacts
   (core-ktx, activity-compose, core-splashscreen, androidx.test.*) are Google-Maven-only, so they
   can't be checked this way from such a sandbox — CI is the only signal for those.
-- **`doInitKoin()`, not `initKoin()`.** Kotlin/Native's Objective-C exporter treats a top-level
-  function named like an initializer (`initXyz`) as an init-style selector and mangles it, so
-  Swift can't call `InitKoinKt.initKoin()` directly. The iOS entry point in
-  `composeApp/src/iosMain/.../InitKoinIos.kt` is named `doInitKoin()` specifically to avoid this;
-  don't rename it back to `initKoin` without testing the actual Swift-side symbol.
+- **`doInitKoin()`, not `initKoin()` - and Swift must call it as `InitKoinIosKt.doInitKoin()`,
+  never bare.** Kotlin/Native's Objective-C exporter treats a top-level function named like an
+  initializer (`initXyz`) as an init-style selector and mangles it, so Swift can't call
+  `InitKoinIosKt.initKoin()` directly. The iOS entry point in
+  `composeApp/src/iosMain/.../InitKoinIos.kt` is named `doInitKoin()` specifically to avoid this.
+  Separately - and this is the bug that actually shipped and broke the `ios-build` CI job -
+  Kotlin/Native's ObjC/Swift export puts every *file's* top-level declarations on a per-file
+  facade class named `<FileName>Kt` (the same JVM-style convention `ContentView.swift` already
+  relies on for `MainViewControllerKt.MainViewController()`), not a single framework-wide facade
+  and not a bare global function. `iOSApp.swift` originally called `doInitKoin()` unqualified,
+  which failed to compile with `error: cannot find 'doInitKoin' in scope`; the fix is
+  `InitKoinIosKt.doInitKoin()` (the file is `InitKoinIos.kt`, so the facade is `InitKoinIosKt`,
+  *not* `InitKoinKt`). This was only caught in an actual `xcodebuild` run - a Linux sandbox can't
+  compile Swift at all, so this class of Swift/Kotlin symbol-naming mismatch is invisible until
+  CI's `ios-build` job runs. Don't rename it back to `initKoin` or drop the `InitKoinIosKt.`
+  qualifier without testing the actual Swift-side symbol against a real build.
 - **The iOS project is hand-authored, not exported from Xcode.** `iosApp/iosApp.xcodeproj/project.pbxproj`
   was written by hand (no CocoaPods, no `xcodegen`). If you add a new Swift file, you must add
   matching `PBXFileReference`/`PBXBuildFile` entries yourself — Xcode will do this for you once
