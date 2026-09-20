@@ -288,6 +288,17 @@ artifacts). That means:
   `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` for this reason - don't remove it without also
   adding `iosX64()` back to every module's `kotlin { }` block (which the "no iosX64" convention
   explicitly avoids).
+- **A backtick-quoted test function name can't contain a comma on Kotlin/Native.** Once
+  `allTests` genuinely started compiling test sources for `iosSimulatorArm64` (see the
+  `withHostTestBuilder` gotcha above - the same fix that finally made JVM tests run also made
+  this target's test compilation for real), `compileTestKotlinIosSimulatorArm64` failed with `e:
+  ... Name contains illegal characters: ","` on a test named
+  `` `a shared contact fills the fields, shows the banner, and triggers a search` ``. Kotlin/
+  Native mangles a backtick-quoted declaration name into part of a generated Objective-C/Swift
+  symbol, and a comma isn't a legal character there, even though the exact same name compiles
+  fine as a JVM test method name (JVM has no such restriction). This is invisible under `allTests`
+  until the iOS-targeted test-compile task actually runs, so grep any new backtick test name for
+  a comma before pushing - `grep -rn 'fun \`[^\`]*,[^\`]*\`' --include=*.kt .` catches it.
 - **ktlint style rules to keep in mind** (all found by CI, not obvious from reading typical
   Kotlin style guides): a class whose body opens with a blank line before the first member is
   flagged ("Class body should not start with blank line") — no blank line right after the opening

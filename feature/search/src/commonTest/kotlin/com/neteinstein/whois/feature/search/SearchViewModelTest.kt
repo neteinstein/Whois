@@ -116,7 +116,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `a shared contact fills the fields, shows the banner, and triggers a search`() = runTest(testDispatcher) {
+    fun `a shared contact fills the fields shows the banner and triggers a search`() = runTest(testDispatcher) {
         val urlOpener = RecordingUrlOpener()
         val incomingShareBus = IncomingShareBus()
         val viewModel = createViewModel(urlOpener = urlOpener, incomingShareBus = incomingShareBus)
